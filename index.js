@@ -1,13 +1,20 @@
 var app = require('express')();
+var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
+// var io = require('socket.io')(app);
+
+var router = require('express').Router();
 
 var config = require('./js/config'),
     data = require('./js/data');
 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static(__dirname + '/public'));
+
+// router.get('/', function(req, res){
+//   res.sendFile(__dirname + '/index.html');
+// });
 
 io.on('connection', function(socket){
   console.log('establishing socket.io connection');
@@ -68,9 +75,16 @@ io.on('connection', function(socket){
     clearInterval(data.users[username].setInterval);
   });
 
-
 });
 
-http.listen(config.PORT, function(){
+//register routes
+app.use(router);
+
+//start server
+app.listen(config.PORT, function(){
   console.log('listening on *:', config.PORT);
 });
+
+// http.listen(config.PORT, function(){
+//   console.log('listening on *:', config.PORT);
+// });
